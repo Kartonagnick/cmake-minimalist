@@ -193,6 +193,11 @@ function(make_target)
 #--------
     cxx_def("${tNAME}" "${tTYPE}" "${tADD_SOURCES}")
 #--------
+
+    if(TARGET "${gNAME_PROJECT}")
+        list(APPEND tDEPENDENCIES "${gNAME_PROJECT}")
+    endif()
+
     set(local_)
     set(external_)
     foreach(libname ${tDEPENDENCIES})
