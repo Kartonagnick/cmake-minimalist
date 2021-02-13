@@ -2,7 +2,8 @@
 # 2020y-08m-24d. Workspace project.
 ################################################################################
 
-message(STATUS "------------------------[minimalist]------------------------>")
+include("${CMAKE_CURRENT_LIST_DIR}/000-version.cmake")
+message(STATUS "------------------------[minimalist-${gMINIMALIST_VERSION}]------------------------>")
 
 # set(CMAKE_BUILD_PARALLEL_LEVEL "$ENV{NUMBER_OF_PROCESSORS}")
 # if(${CMAKE_GENERATOR} MATCHES "Makefiles")
