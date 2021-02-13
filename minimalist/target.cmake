@@ -68,7 +68,10 @@ function(make_target)
         PATHS_LIBRARIES NAMES_LIBRARIES
         ADD_HEADERS ADD_SOURCES 
     )
-    cmake_parse_arguments("target" "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    cmake_parse_arguments("target" "${options}" "${oneValueArgs}" 
+        "${multiValueArgs}" ${ARGN}
+    )
 
     foreach(variable ${options} ${oneValueArgs} ${multiValueArgs})
         set(t${variable} ${target_${variable}}) 
@@ -159,6 +162,8 @@ function(make_target)
         list(REMOVE_DUPLICATES tPREPROCESSOR)
     endif()
 #--------
+    set(gTARGETS_TYPE_${tNAME} "${tTYPE}" PARENT_SCOPE)
+#--------
     if(tVIEW_RESULT OR gDEBUG)
         view_variables(
             DESCRIPTION "${tNAME}" 
@@ -182,11 +187,12 @@ function(make_target)
            VIEW_EMPTY
         )
     endif()
-
 #--------
     if(TARGET "${gNAME_PROJECT}")
-        debug_message("${tNAME}: add dependency for '${gNAME_PROJECT}'")
-        list(APPEND tDEPENDENCIES "${gNAME_PROJECT}")
+        if(NOT "${gTARGETS_TYPE_${gNAME_PROJECT}}" STREQUAL "HEADER_ONLY")
+            debug_message("${tNAME}: add dependency for '${gNAME_PROJECT}'")
+            list(APPEND tDEPENDENCIES "${gNAME_PROJECT}")
+        endif()
     endif()
 #--------
     cxx_target("${tNAME}" "${tTYPE}" ${tSOURCES} ${tHEADERS})

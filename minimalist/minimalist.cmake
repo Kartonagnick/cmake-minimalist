@@ -5,6 +5,25 @@
 include("${CMAKE_CURRENT_LIST_DIR}/000-version.cmake")
 message(STATUS "------------------------[minimalist-${gMINIMALIST_VERSION}]------------------------>")
 
+#--------
+    if(NOT gDIR_SOURCE)
+        message(FATAL_ERROR "'gDIR_SOURCE' not specified")
+    endif()
+    if(NOT IS_DIRECTORY "${gDIR_SOURCE}")
+        message(FATAL_ERROR "'gDIR_SOURCE' must be directory")
+    endif()
+    get_filename_component(gDIR_SOURCE "${gDIR_SOURCE}" ABSOLUTE)
+
+    if(gDIR_SOURCE MATCHES "^_.*")
+        message(FATAL_ERROR "'gDIR_SOURCE' among ignored")
+    elseif(gDIR_SOURCE MATCHES "^.*/_.*")
+        message(STATUS "[ERROR] source directory is located in an ignored subdirectory")
+        message(STATUS "[ERROR] check: gDIR_SOURCE")
+        message(STATUS "[ERROR] gDIR_SOURCE: '${gDIR_SOURCE}'")
+        message(FATAL_ERROR "'gDIR_SOURCE' among ignored")
+    endif()
+#--------
+
 # set(CMAKE_BUILD_PARALLEL_LEVEL "$ENV{NUMBER_OF_PROCESSORS}")
 # if(${CMAKE_GENERATOR} MATCHES "Makefiles")
 #    # set(CMAKE_MAKE_PROGRAM "${CMAKE_MAKE_PROGRAM} -j4")
