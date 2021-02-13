@@ -75,9 +75,6 @@ macro(default_settings)
         set(gRUNTIME_CPP "dynamic")
     endif()
 #--------
-#    if(NOT gADDITIONAL)
-#    endif()
-#--------
     if(NOT gSUFFIX)
         set(gSUFFIX "{TARGET_TYPE}-{COMPILER_TAG}-{BUILD_TYPE}-{ADDRESS_MODEL}-{RUNTIME_CPP}/{TARGET_NAME}")
     endif()

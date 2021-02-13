@@ -172,17 +172,21 @@ function(make_target)
                 tHEADERS
                 tSOURCES
                 tRESOURCES
-
                 tPREPROCESSOR
                 tDEPENDENCIES 
-
                 tPATHS_LIBRARIES
                 tNAMES_LIBRARIES
                 tADD_HEADERS
                 tADD_SOURCES
-                tLANGUAGE
+                # tLANGUAGE
            VIEW_EMPTY
         )
+    endif()
+
+#--------
+    if(TARGET "${gNAME_PROJECT}")
+        debug_message("${tNAME}: add dependency for '${gNAME_PROJECT}'")
+        list(APPEND tDEPENDENCIES "${gNAME_PROJECT}")
     endif()
 #--------
     cxx_target("${tNAME}" "${tTYPE}" ${tSOURCES} ${tHEADERS})
@@ -193,10 +197,6 @@ function(make_target)
 #--------
     cxx_def("${tNAME}" "${tTYPE}" "${tADD_SOURCES}")
 #--------
-
-    if(TARGET "${gNAME_PROJECT}")
-        list(APPEND tDEPENDENCIES "${gNAME_PROJECT}")
-    endif()
 
     set(local_)
     set(external_)
@@ -259,9 +259,7 @@ endfunction()
 ################################################################################
 
 function(_make_target)
-    if(gDEBUG)
-        message(STATUS "  ignore target...")
-    endif()
+    debug_message("  ignore target...")
 endfunction()
 
 ################################################################################

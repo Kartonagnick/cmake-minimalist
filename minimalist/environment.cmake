@@ -15,9 +15,7 @@
 
 macro(load_environment)
 
-    if(gDEBUG)
-        message(STATUS "[load environment]")
-    endif()
+    debug_message("[load environment]")
 
     if(NOT gENVIRONMENT_VARIABLES)
         set(gENVIRONMENT_VARIABLES 
@@ -41,9 +39,7 @@ macro(load_environment)
         set(tmp "$ENV{e${variable}}")
         if(tmp)
             file(TO_CMAKE_PATH "${tmp}" g${variable})
-            if(gDEBUG)
-                message(STATUS "  load from environment: [g${variable}] ${g${variable}}")
-            endif()
+            debug_message("  load from environment: [g${variable}] ${g${variable}}")
         endif()
     endforeach()
     unset(tmp)

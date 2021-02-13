@@ -4,12 +4,12 @@
 
 message(STATUS "------------------------[minimalist]------------------------>")
 
-set(CMAKE_BUILD_PARALLEL_LEVEL "$ENV{NUMBER_OF_PROCESSORS}")
-if(${CMAKE_GENERATOR} MATCHES "Makefiles")
-    # set(CMAKE_MAKE_PROGRAM "${CMAKE_MAKE_PROGRAM} -j4")
-    # message(STATUS "[CMAKE_MAKE_PROGRAM] '${CMAKE_MAKE_PROGRAM}'")
-    # set(CMAKE_MAKE_PROGRAM "${CMAKE_MAKE_PROGRAM} -m32")
-endif()
+# set(CMAKE_BUILD_PARALLEL_LEVEL "$ENV{NUMBER_OF_PROCESSORS}")
+# if(${CMAKE_GENERATOR} MATCHES "Makefiles")
+#    # set(CMAKE_MAKE_PROGRAM "${CMAKE_MAKE_PROGRAM} -j4")
+#    # message(STATUS "[CMAKE_MAKE_PROGRAM] '${CMAKE_MAKE_PROGRAM}'")
+#    # set(CMAKE_MAKE_PROGRAM "${CMAKE_MAKE_PROGRAM} -m32")
+# endif()
 
 get_filename_component(gDIR_TOOLS "${gDIR_CMAKE_SCENARIO}/tools" ABSOLUTE)
 if(NOT IS_DIRECTORY "${gDIR_TOOLS}")
@@ -17,6 +17,12 @@ if(NOT IS_DIRECTORY "${gDIR_TOOLS}")
     message(STATUS "[gDIR_TOOLS] ............ '${gDIR_TOOLS}'")
     message(FATAL_ERROR "'gDIR_TOOLS' must be directory" )
 endif()
+
+macro(debug_message)
+    if(gDEBUG)
+        message(STATUS "${ARGN}") 
+    endif()
+endmacro()
 
 macro(import_from_tools name)
     if("${ARGV1}" STREQUAL "")

@@ -238,7 +238,8 @@ macro(set_global_compiler_keys)
     set(CMAKE_CXX_STANDARD_REQUIRED YES)
     set(CMAKE_CXX_EXTENSIONS NO)
 
-    if(gDEBUG)
+
+    if(gVIEW_COMPILER_KEYS)
         message(STATUS "[compiler keys]")
         message(STATUS "  [CMAKE_CXX_STANDARD] c++${gSTANDARD_CPP}")
 
