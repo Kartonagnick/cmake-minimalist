@@ -90,9 +90,7 @@ function(make_target)
 #--------
     if(TARGET ${tNAME})
         if(tVIEW_RESULT OR gDEBUG)
-            view_variables(
-                DESCRIPTION "${tNAME}" 
-            )
+            view_variables(DESCRIPTION "${tNAME}")
             message(STATUS "already processed -> skip")
         endif()
         return()
@@ -188,17 +186,23 @@ function(make_target)
         )
     endif()
 #--------
-    if(TARGET "${gNAME_PROJECT}")
-        if(NOT "${gTARGETS_TYPE_${gNAME_PROJECT}}" STREQUAL "HEADER_ONLY")
-            debug_message("${tNAME}: add dependency for '${gNAME_PROJECT}'")
-            list(APPEND tDEPENDENCIES "${gNAME_PROJECT}")
-        endif()
-    endif()
-#--------
     cxx_target("${tNAME}" "${tTYPE}" ${tSOURCES} ${tHEADERS})
     if(tLANGUAGE)
         message(STATUS "${tNAME}: language: '${tLANGUAGE}'")
         set_target_properties(${tNAME} PROPERTIES LINKER_LANGUAGE ${tLANGUAGE})
+    endif()
+#--------
+    if(TARGET "${gNAME_PROJECT}")
+        set(gTYPE_MASTER "${gTARGETS_TYPE_${gNAME_PROJECT}}")
+        if("${gTYPE_MASTER}" STREQUAL "HEADER_ONLY")
+            debug_message("${tNAME}: add headers from '${gNAME_PROJECT}'")
+            target_link_libraries(${tNAME} INTERFACE ${gNAME_PROJECT})
+        elseif("${gTYPE_MASTER}" STREQUAL "STATIC_LIBRARY")
+            debug_message("${tNAME}: add depency '${gNAME_PROJECT}'")
+            target_link_libraries(${tNAME} PUBLIC ${tDEPENDENCIES})
+        else()
+            debug_message("${tNAME}: ignore '${gNAME_PROJECT}' its type is incompatible: ${gTYPE_MASTER}")
+        endif()
     endif()
 #--------
     cxx_def("${tNAME}" "${tTYPE}" "${tADD_SOURCES}")
@@ -229,7 +233,10 @@ function(make_target)
 
     if(tDEPENDENCIES)
         list(REMOVE_DUPLICATES tDEPENDENCIES)
+
         target_link_libraries(${tNAME} PUBLIC ${tDEPENDENCIES})
+
+
 
         #if(${CMAKE_GENERATOR} MATCHES "Makefiles")
         #    target_link_libraries(${tNAME} PUBLIC ${tDEPENDENCIES} static-libstdc++fs)
