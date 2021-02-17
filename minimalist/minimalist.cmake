@@ -91,6 +91,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/add/add_gmock_impl.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/add/add_gtest_impl.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/add/add_mygtest_impl.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/add/add_tools_impl.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/add/add_sqlitedb_impl.cmake")
 #-------------------------------------------------------------------------------
 
 include("${CMAKE_CURRENT_LIST_DIR}/cxx/cxx.cmake")
