@@ -3,7 +3,7 @@
 -------------------
 
 - В системе должны быть установлены [git](https://git-scm.com/downloads) и [cmake](https://cmake.org/download/).  
-- Предполагается, что вы знакомы с   [cmake](https://habr.com/ru/post/461817/)  
+- Предполагается, что вы знакомы с [cmake](https://habr.com/ru/post/461817/)  
 - Вам понадобится интернет.  
 
 1. Для начала нужно клонировать репозиторий Minimalist в каталог проекта.  
@@ -16,7 +16,39 @@
 2. В каталоге `minimalist` присутствует файл `CMakeLists.txt`  
    В этом файле нужно описать цели сборки.  
 
-3. После чего можно сгенерировать сборочные MakeFile:  
+   Например:  
+
+   ```
+   make_target(PATH_TO_SOURCES "dependencies/common")
+   make_target(PATH_TO_SOURCES "dependencies/utf8")
+
+   make_target(
+       NAME "implementation"
+       PATH_TO_SOURCES "lib-command"
+       DEPENDENCIES "tools" "common" "utf8" "sqlitedb"
+   )
+
+   make_target(
+       NAME "group_mapping"
+       PATH_TO_SOURCES "exe-command"
+       DEPENDENCIES "implementation" "sqlitedb"
+   )
+
+   make_target(
+       PATH_TO_SOURCES "test"
+       DEPENDENCIES "implementation" "sqlitedb"
+   )
+   ```
+
+   В этом примере указаны 5 целей сборки: common, utf8,implementation, group_mapping, и test  
+   От пользователя нужно лишь, что бы он указал зависимости целей друг от друга.
+   Вся остальная информация, такая как: 
+     списки исходных файлов, пути для поиска заголовков, и тп, 
+     будет определена автоматически.  
+  
+
+
+3. После чего можно уже сгенерировать сборочные MakeFile:  
 
    ```
    cmake.exe ^
@@ -26,7 +58,7 @@
        -D"CMAKE_BUILD_TYPE=%eBUILD_TYPE%"
    ```
 
-4. И, наконец, запустить сборку:  
+4. И, наконец, запустить саму сборку:  
    ```
    cmake.exe                               ^
        --build    "%eDIR_BUILD%"           ^
