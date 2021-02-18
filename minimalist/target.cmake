@@ -194,12 +194,15 @@ function(make_target)
 #--------
     if(TARGET "${gNAME_PROJECT}")
         set(gTYPE_MASTER "${gTARGETS_TYPE_${gNAME_PROJECT}}")
+
         if("${gTYPE_MASTER}" STREQUAL "HEADER_ONLY")
             debug_message("${tNAME}: add headers from '${gNAME_PROJECT}'")
             target_link_libraries(${tNAME} INTERFACE ${gNAME_PROJECT})
+
         elseif("${gTYPE_MASTER}" STREQUAL "STATIC_LIBRARY")
             debug_message("${tNAME}: add depency '${gNAME_PROJECT}'")
-            target_link_libraries(${tNAME} PUBLIC ${tDEPENDENCIES})
+            target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
+
         else()
             debug_message("${tNAME}: ignore '${gNAME_PROJECT}' its type is incompatible: ${gTYPE_MASTER}")
         endif()
