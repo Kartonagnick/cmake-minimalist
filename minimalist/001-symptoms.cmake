@@ -1,6 +1,21 @@
 
-# 2020y-08m-24d. WorkSpace project.
+# [2020y-08m-24d][00:00:00]. WorkSpace project.
+# [2021y-03m-08d][08:16:11]. Idrisov D. R.
 ################################################################################
+
+function(check_exist_symptom path symptom result)
+    set(content)
+    FILE (GLOB content "${path}/${symptom}")
+    list(FILTER content EXCLUDE REGEX "^_.*")
+    list(FILTER content EXCLUDE REGEX "^.*/_.*")
+    if(content)
+        # message(STATUS "check_exist_symptom: ${symptom}: ON")
+        set(${result} "ON" PARENT_SCOPE)
+    else()
+        # message(STATUS "check_exist_symptom: ${symptom}: OFF")
+        set(${result} "" PARENT_SCOPE)
+    endif()
+endfunction()
 
 function(check_current_symptoms var_output where symptoms)
     if(NOT symptoms)
@@ -8,7 +23,9 @@ function(check_current_symptoms var_output where symptoms)
         return()
     endif()
     foreach(symptom ${symptoms})
-        if(EXISTS "${where}/${symptom}")
+        set(result)
+        check_exist_symptom("${where}" "${symptom}" result)
+        if(result)
             set(${var_output} "ON" PARENT_SCOPE)
             return()
         endif()
