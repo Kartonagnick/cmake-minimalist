@@ -167,9 +167,14 @@ macro(set_global_compiler_keys)
             set(post_keys "${post_keys} /Zc:twoPhase-")
         endif()
 
+        if(MSVC_VERSION GREATER "1500")
+            # msvc2010 or latest
+            set(begin_keys "/MP")
+        endif()
+
         if(MSVC_VERSION GREATER "1600")
             # msvc2012 or latest
-            set(begin_keys "/sdl")
+            set(begin_keys "/sdl ${begin_keys}")
         endif()
 
 
@@ -178,7 +183,7 @@ macro(set_global_compiler_keys)
         endif()
 
         set(post_keys    "${post_keys} /D_UNICODE /DUNICODE")
-        set(common_keys  "${begin_keys} /GR /W4 /WX /nologo /MP /openmp /FC /EHa")
+        set(common_keys  "${begin_keys} /GR /W4 /WX /nologo /openmp /FC /EHa")
         set(release_keys "/Gy /Oi /O2 /Ob2 /Ot /Oy /DNDEBUG")
         set(debug_keys   "/Od /Ob0 /Zi /RTC1 /DDEBUG /D_DEBUG")
 
