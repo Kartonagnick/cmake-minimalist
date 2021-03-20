@@ -208,10 +208,13 @@ macro(set_global_compiler_keys)
 
         # set(pre_keys "-std=c++17")
 
+        # hide carret
+        # set (pre_keys "-ftrack-macro-expansion=0 -fno-diagnostics-show-caret")
+
         if(gADDRESS_MODEL EQUAL "32")
-            set(pre_keys "-m32")
+            set(pre_keys "${pre_keys} -m32")
         elseif(gADDRESS_MODEL EQUAL "64")
-            set(pre_keys "-m64")
+            set(pre_keys "${pre_keys} -m64")
         else()
             message(STATUS "[gADDRESS_MODEL] ... ${gADDRESS_MODEL}")
             message(FATAL_ERROR "invalid address model")
@@ -230,6 +233,9 @@ macro(set_global_compiler_keys)
         if(compare_result STREQUAL "LESS")
             link_libraries(stdc++fs)
         endif()
+
+        
+
 
         unset(post_keys)
         unset(pre_keys)
