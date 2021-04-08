@@ -12,7 +12,7 @@
 
 macro(detect_address_model)
 
-    message(STATUS "([CMAKE_SIZEOF_VOID_P] ... ${CMAKE_SIZEOF_VOID_P}")
+    message(STATUS "[CMAKE_SIZEOF_VOID_P] ... ${CMAKE_SIZEOF_VOID_P}")
 
     if(CMAKE_SIZEOF_VOID_P)
         if(CMAKE_SIZEOF_VOID_P MATCHES "8")
