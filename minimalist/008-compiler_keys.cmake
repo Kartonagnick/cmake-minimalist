@@ -208,8 +208,9 @@ macro(set_global_compiler_keys)
 
         # set(pre_keys "-std=c++17")
 
-        # hide carret
-        # set (pre_keys "-ftrack-macro-expansion=0 -fno-diagnostics-show-caret")
+        if(NOT gVERBOSE_OUTPUT)
+            set (pre_keys "-ftrack-macro-expansion=0 -fno-diagnostics-show-caret")
+        endif()
 
         if(gADDRESS_MODEL EQUAL "32")
             set(pre_keys "${pre_keys} -m32")
@@ -233,9 +234,6 @@ macro(set_global_compiler_keys)
         if(compare_result STREQUAL "LESS")
             link_libraries(stdc++fs)
         endif()
-
-        
-
 
         unset(post_keys)
         unset(pre_keys)

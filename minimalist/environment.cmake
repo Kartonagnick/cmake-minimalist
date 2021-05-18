@@ -32,6 +32,7 @@ macro(load_environment)
             ADDRESS_MODEL
             RUNTIME_CPP
             DEFINES
+            VERBOSE_OUTPUT
         )
     endif()
 
