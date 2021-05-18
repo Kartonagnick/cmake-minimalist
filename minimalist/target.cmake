@@ -106,7 +106,8 @@ function(make_target)
 #--------
     if(tHEADER_ONLY)
         set(tTYPE "HEADER_ONLY")
-        message(STATUS "--HEADER_ONLY")
+    elseif("${tTYPE}" STREQUAL "HEADER_ONLY")
+        #--- skip
     else()
         foreach(cur src source sources)
             if(IS_DIRECTORY "${tDIR_SOURCE}/${cur}")
