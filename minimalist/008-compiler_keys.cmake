@@ -344,3 +344,8 @@ endmacro()
 
 
 # g++ -std=c++1z -Wall -Wextra -Wunused  -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wuseless-cast -pedantic-errors -O3 main.cpp -lstdc++fs
+
+    # if(MINGW)
+    #       target_link_libraries(${tNAME} PUBLIC stdc++fs)
+    # endif()
+    #target_link_libraries(${tNAME} PRIVATE $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>)

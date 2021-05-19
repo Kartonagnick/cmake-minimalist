@@ -39,8 +39,21 @@ endfunction()
 
 ################################################################################
 
-function(cxx_precompiled target var_headers)
+function(cxx_find_precompiled var_headers var_result)
+    foreach(cur ${${var_headers}})
+        get_filename_component(name "${cur}" NAME_WE)
+        foreach(check pch stdafx precompiled)
+            if("${check}" STREQUAL "${name}")
+                set(${var_result} "${cur}" PARENT_SCOPE)
+                return()
+            endif()
+        endforeach()
+    endforeach()		
+endfunction()
 
+################################################################################
+
+function(cxx_precompiled target var_headers)
     foreach(cur ${${var_headers}})
         get_filename_component(name "${cur}" NAME_WE)
         foreach(check pch stdafx precompiled)
@@ -51,3 +64,5 @@ function(cxx_precompiled target var_headers)
         endforeach()
     endforeach()		
 endfunction()
+
+################################################################################

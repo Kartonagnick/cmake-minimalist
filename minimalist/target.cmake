@@ -1,9 +1,8 @@
-
 # 2020y-05m-24d. Workspace project.
 # 2020y-08m-25d. Workspace project.
 # 2021y-01m-18d. Workspace project.
+# [2021y-05m-20d][00:40:03] Idrisov D. R.
 ################################################################################
-
 # import_from_tools(view_variables)
 # import_from_tools(format_string)
 # import_from_tools(absolute make_file_absolute)
@@ -115,12 +114,11 @@ function(make_target)
                 list(APPEND tADD_HEADERS "${tDIR_SOURCE}/${cur}")
             endif()
         endforeach()
-        if(NOT tADD_SOURCES)
-            set(tADD_SOURCES "${tDIR_SOURCE}")
-        endif()
+#        if(NOT tADD_SOURCES)
+#            set(tADD_SOURCES "${tDIR_SOURCE}")
+#        endif()
         foreach(cur ${tADD_SOURCES})
            cxx_cpp("${cur}" tSOURCES)
-           message(STATUS "--${cur}")
         endforeach()
     endif()
 #--------
@@ -128,12 +126,13 @@ function(make_target)
         list(APPEND tINCLUDES    "${tDIR_SOURCE}/include")
         list(APPEND tADD_HEADERS "${tDIR_SOURCE}/include")
     endif()
-    if(NOT tADD_HEADERS)
-        set(tADD_HEADERS "${tDIR_SOURCE}")
-    endif()
+#    if(NOT tADD_HEADERS)
+#        set(tADD_HEADERS "${tDIR_SOURCE}")
+#    endif()
     foreach(cur ${tADD_HEADERS})
         cxx_hpp("${cur}" tHEADERS)
     endforeach()
+    cxx_find_precompiled(tHEADERS tPRECOMPILED)
 #--------
     foreach(dir resource resources)
         if(IS_DIRECTORY "${tDIR_SOURCE}/${dir}")
@@ -189,7 +188,16 @@ function(make_target)
         )
     endif()
 #--------
-    cxx_target("${tNAME}" "${tTYPE}" ${tSOURCES} ${tHEADERS})
+    if(tPRECOMPILED)
+        if(NOT tSOURCES)
+            set(tDUMMY "${CMAKE_BINARY_DIR}/dummy.cpp")
+            if(NOT EXISTS "${tDUMMY}")
+                file(WRITE  "${tDUMMY}" "// workspace project\n")
+            endif()
+        endif()
+    endif()
+#--------
+    cxx_target("${tNAME}" "${tTYPE}" ${tSOURCES} ${tHEADERS} ${tDUMMY})
     if(tLANGUAGE)
         message(STATUS "${tNAME}: language: '${tLANGUAGE}'")
         set_target_properties(${tNAME} PROPERTIES LINKER_LANGUAGE ${tLANGUAGE})
@@ -214,7 +222,6 @@ function(make_target)
 #--------
     cxx_def("${tNAME}" "${tTYPE}" "${tADD_SOURCES}")
 #--------
-
     set(local_)
     set(external_)
     foreach(libname ${tDEPENDENCIES})
@@ -240,21 +247,8 @@ function(make_target)
 
     if(tDEPENDENCIES)
         list(REMOVE_DUPLICATES tDEPENDENCIES)
-
         target_link_libraries(${tNAME} PUBLIC ${tDEPENDENCIES})
-
-
-
-        #if(${CMAKE_GENERATOR} MATCHES "Makefiles")
-        #    target_link_libraries(${tNAME} PUBLIC ${tDEPENDENCIES} static-libstdc++fs)
-        #endif()
-
     endif()
-
-    # if(MINGW)
-    #       target_link_libraries(${tNAME} PUBLIC stdc++fs)
-    # endif()
-    #target_link_libraries(${tNAME} PRIVATE $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>)
 
     foreach(libname ${tNAMES_LIBRARIES})
         if(NOT "${gNAME_PROJECT}" STREQUAL "${libname}")
@@ -268,8 +262,11 @@ function(make_target)
         cxx_ouput_path("${tNAME}" "${tTYPE}" "${tSHORT}")
         cxx_output_pdb("${tNAME}" "${tSHORT}")
         cxx_resources("${tNAME}" tRESOURCES)
-        cxx_precompiled("${tNAME}" tHEADERS)
         cxx_bigobj("${tNAME}" "${tTYPE}" "${tSPECIALIZATION}")
+    endif()
+
+    if(tPRECOMPILED)
+        cxx_add_precompiled("${tNAME}" "${tPRECOMPILED}")
     endif()
 #--------
     cxx_source_group("${tNAME}" "${tDIR_SOURCE}" tHEADERS)
