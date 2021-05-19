@@ -14,7 +14,21 @@
 
 #-------------------------------------------------------------------------------
 
-set(gSTANDARD_CPP 17)
+if(MSVC)
+    set(gSTANDARD_CPP 17)
+else()
+    compare_versions(
+        "${CMAKE_CXX_COMPILER_VERSION}"  "4.9.4" 
+        compare_result
+    )
+    if(compare_result STREQUAL "GREATER")
+        # --- (4.9.4 : newest] 
+        set(gSTANDARD_CPP 17)
+    else()
+        # --- [older: 4.9.4] 
+        set(gSTANDARD_CPP 14)
+    endif()
+endif()
 
 function(remove_duplicate variable)
     set(result)
@@ -232,7 +246,15 @@ macro(set_global_compiler_keys)
             compare_result
         )
         if(compare_result STREQUAL "LESS")
-            link_libraries(stdc++fs)
+
+            compare_versions(
+                "${CMAKE_CXX_COMPILER_VERSION}"  "5.4.0" 
+                compare_result
+            )
+            if(compare_result STREQUAL "GREATER")
+                # --- (5.4.0 : 8.1.0)
+                link_libraries(stdc++fs)
+            endif()
         endif()
 
         unset(post_keys)
