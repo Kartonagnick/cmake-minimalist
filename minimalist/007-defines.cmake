@@ -18,6 +18,14 @@ macro(detect_defines)
         add_definitions(-DdX64=1)
     endif()
 
+    if(${gRUNTIME_CPP} STREQUAL "dynamic")
+        add_definitions("$<$<CONFIG:RELEASE>:-DdCRT=MT>")
+        add_definitions("$<$<CONFIG:DEBUG>:-DdCRT=MTd>")
+    else()
+        add_definitions("$<$<CONFIG:RELEASE>:-DdCRT=MD>")
+        add_definitions("$<$<CONFIG:DEBUG>:-DdCRT=MDd>")
+    endif()
+
     add_definitions(-D_UNICODE -DUNICODE)
 
     set(defines_ ${gDEFINES})
