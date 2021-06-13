@@ -19,11 +19,19 @@ macro(detect_defines)
     endif()
 
     if(${gRUNTIME_CPP} STREQUAL "dynamic")
-        add_definitions("$<$<CONFIG:RELEASE>:-DdCRT=MT>")
-        add_definitions("$<$<CONFIG:DEBUG>:-DdCRT=MTd>")
+        # message(STATUS "detect_defines: dynamic")
+        add_compile_options("$<$<CONFIG:RELEASE>:-DdCRT_TXT=MD>")
+        add_compile_options("$<$<CONFIG:RELEASE>:-DdCRT_VAL=1>")
+
+        add_compile_options("$<$<CONFIG:DEBUG>:-DdCRT_TXT=MDd>")
+        add_compile_options("$<$<CONFIG:DEBUG>:-DdCRT_VAL=3>")
     else()
-        add_definitions("$<$<CONFIG:RELEASE>:-DdCRT=MD>")
-        add_definitions("$<$<CONFIG:DEBUG>:-DdCRT=MDd>")
+        # message(STATUS "detect_defines: static")
+        add_compile_options("$<$<CONFIG:RELEASE>:-DdCRT_TXT=MT>")
+        add_compile_options("$<$<CONFIG:RELEASE>:-DdCRT_VAL=2>")
+
+        add_compile_options("$<$<CONFIG:DEBUG>:-DdCRT_TXT=MTd>")
+        add_compile_options("$<$<CONFIG:DEBUG>:-DdCRT_VAL=4>")
     endif()
 
     add_definitions(-D_UNICODE -DUNICODE)
