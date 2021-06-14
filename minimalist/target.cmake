@@ -1,7 +1,7 @@
-# 2020y-05m-24d. Workspace project.
-# 2020y-08m-25d. Workspace project.
-# 2021y-01m-18d. Workspace project.
 # [2021y-05m-20d][00:40:03] Idrisov D. R.
+# 2021y-01m-18d. Workspace project.
+# 2020y-08m-25d. Workspace project.
+# 2020y-05m-24d. Workspace project.
 ################################################################################
 # import_from_tools(view_variables)
 # import_from_tools(format_string)
@@ -192,6 +192,8 @@ function(make_target)
         if(NOT tSOURCES)
             set(tDUMMY "${CMAKE_BINARY_DIR}/dummy.cpp")
             if(NOT EXISTS "${tDUMMY}")
+                debug_message("${tNAME}: create dummy.cpp")
+                debug_message("${tNAME}: ${tDUMMY}")
                 file(WRITE  "${tDUMMY}" "// workspace project\n")
                 file(APPEND "${tDUMMY}" "// this file was created automatically\n")
                 file(APPEND "${tDUMMY}" "// to support precompiled header\n")
@@ -206,22 +208,43 @@ function(make_target)
         set_target_properties(${tNAME} PROPERTIES LINKER_LANGUAGE ${tLANGUAGE})
     endif()
 #--------
-    if(TARGET "${gNAME_PROJECT}")
-        set(gTYPE_MASTER "${gTARGETS_TYPE_${gNAME_PROJECT}}")
-        if(gTYPE_MASTER)
-            if("${gTYPE_MASTER}" STREQUAL "HEADER_ONLY")
-                debug_message("${tNAME}: add headers from '${gNAME_PROJECT}'")
+
+if(TARGET "${gNAME_PROJECT}")
+    if(NOT "${tNAME}" STREQUAL "${gNAME_PROJECT}")
+        get_target_property(master_type ${gNAME_PROJECT} TYPE)
+        if (${master_type} STREQUAL "INTERFACE_LIBRARY")
+            if("${tTYPE}" STREQUAL "HEADER_ONLY")
+                debug_message("${tNAME}: add headers from header-only '${gNAME_PROJECT}'")
                 target_link_libraries(${tNAME} INTERFACE ${gNAME_PROJECT})
-
-            elseif("${gTYPE_MASTER}" STREQUAL "STATIC_LIBRARY")
-                debug_message("${tNAME}: add depency '${gNAME_PROJECT}'")
-                target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
-
             else()
-                debug_message("${tNAME}: ignore '${gNAME_PROJECT}' its type is incompatible: ${gTYPE_MASTER}")
+                debug_message("${tNAME}: add depency from headr-only '${gNAME_PROJECT}'")
+                target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
             endif()
+        else()
+            debug_message("${tNAME}: add depency '${gNAME_PROJECT}'")    
+            target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
         endif()
     endif()
+endif()
+    
+
+#    if(TARGET "${gNAME_PROJECT}")
+#        set(gTYPE_MASTER "${gTARGETS_TYPE_${gNAME_PROJECT}}")
+#        if(gTYPE_MASTER)
+#            if("${gTYPE_MASTER}" STREQUAL "HEADER_ONLY")
+#                debug_message("${tNAME}: add headers from '${gNAME_PROJECT}'")
+#                target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
+#                #target_link_libraries(${tNAME} INTERFACE ${gNAME_PROJECT})
+#
+#            elseif("${gTYPE_MASTER}" STREQUAL "STATIC_LIBRARY")
+#                debug_message("${tNAME}: add depency '${gNAME_PROJECT}'")
+#                target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
+#
+#            else()
+#                debug_message("${tNAME}: ignore '${gNAME_PROJECT}' its type is incompatible: ${gTYPE_MASTER}")
+#            endif()
+#        endif()
+#    endif()
 #--------
     cxx_def("${tNAME}" "${tTYPE}" "${tADD_SOURCES}")
 #--------

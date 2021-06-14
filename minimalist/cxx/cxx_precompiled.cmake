@@ -35,6 +35,12 @@ function(cxx_add_precompiled target path_to_header)
         "$<$<COMPILE_LANGUAGE:CXX>:${path_to_header}>"
     )
 
+    if("${type}" STREQUAL "HEADER_ONLY")
+        target_compile_definitions(${target} INTERFACE "dPCH_USED=1")
+    else()
+        target_compile_definitions(${target} PRIVATE "dPCH_USED=1")
+    endif()
+
 endfunction()
 
 ################################################################################
