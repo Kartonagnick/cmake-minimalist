@@ -57,6 +57,7 @@ function(make_target)
         PATH_TO_SOURCES
         SPECIALIZATION
         LANGUAGE
+        OUTPUT
         SHORT
         NAME
         TYPE
@@ -169,6 +170,7 @@ function(make_target)
             DESCRIPTION "${tNAME}" 
             VARIABLES
                 tDIR_SOURCE
+                tOUTPUT
                 tNAME
                 tTYPE
                 tSHORT
@@ -282,11 +284,15 @@ endif()
         endif()
     endforeach()
 #--------
+    if(NOT tOUTPUT)
+        set(tOUTPUT "${tNAME}")
+    endif()
+
     cxx_defines("${tNAME}" "${tTYPE}" ${tPREPROCESSOR})
     cxx_includes("${tNAME}" "${tTYPE}" ${tINCLUDES})
     if(NOT "${tTYPE}" STREQUAL "HEADER_ONLY")
-        cxx_ouput_path("${tNAME}" "${tTYPE}" "${tSHORT}")
-        cxx_output_pdb("${tNAME}" "${tSHORT}")
+        cxx_ouput_path("${tNAME}" "${tTYPE}" "${tSHORT}" "${tOUTPUT}")
+        cxx_output_pdb("${tNAME}" "${tSHORT}" "${tOUTPUT}")
         cxx_resources("${tNAME}" tRESOURCES)
         cxx_bigobj("${tNAME}" "${tTYPE}" "${tSPECIALIZATION}")
     endif()
@@ -297,6 +303,28 @@ endif()
 #--------
     cxx_source_group("${tNAME}" "${tDIR_SOURCE}" tHEADERS)
     cxx_source_group("${tNAME}" "${tDIR_SOURCE}" tSOURCES)
+
+    unset(tVIEW_RESULT)
+    unset(tPATH_TO_SOURCES)
+    unset(tSPECIALIZATION)
+    unset(tLANGUAGE)
+    unset(tOUTPUT)
+    unset(tSHORT)
+    unset(tNAME)
+    unset(tTYPE)
+
+    unset(tINCLUDES)
+    unset(tHEADERS)
+    unset(tSOURCES)
+    unset(tRESOURCES)
+    unset(tPREPROCESSOR)
+    unset(tDEPENDENCIES)
+    unset(tPATHS_LIBRARIES)
+    unset(tNAMES_LIBRARIES)
+
+    unset(ADD_HEADERS)
+    unset(ADD_SOURCES)
+    unset(tDIR_SOURCE)
 endfunction()
 
 ################################################################################

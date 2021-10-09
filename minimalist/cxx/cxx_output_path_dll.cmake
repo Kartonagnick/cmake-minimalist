@@ -10,13 +10,22 @@
 #    cxx_ouput_path_dll("${TARGET_NAME}" "SHARED_LIBRARY")
 #
 
-function(cxx_ouput_path_dll target short)
+function(cxx_ouput_path_dll target short name_output)
 
     if(gDEBUG)
         message(STATUS "[output path]")
     endif()
 
-    set(gTARGET_NAME "${target}")    
+    if(name_output)
+        if(gDEBUG)
+            message(STATUS "  name_output: ${name_output}")
+        endif()
+        set(gTARGET_NAME "${name_output}")    
+    else()
+        set(gTARGET_NAME "${target}")    
+    endif()
+
+
     if("${target}" MATCHES "${short}")
         set(gTARGET_TYPE "")
     else()
@@ -64,6 +73,18 @@ function(cxx_ouput_path_dll target short)
             "${output}"
         )
     endforeach()
+
+    if(name_output)
+        set_target_properties(${target} 
+            PROPERTIES OUTPUT_NAME "${name_output}"
+        )
+        foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+            string(TOUPPER ${conf} CONFIG ) 
+            set_target_properties(${target} 
+                PROPERTIES OUTPUT_NAME "${name_output}"
+            )
+        endforeach()
+    endif()
 
 endfunction()
 
