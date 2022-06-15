@@ -1,4 +1,6 @@
 # WorkSpace project
+# [2022y-06m-06d][05:17:32] Idrisov D. R. 020
+# [2022y-04m-21d][17:35:25] Idrisov D. R. 019
 # [2021y-06m-14d][01:37:25] Idrisov D. R. 018
 # [2021y-06m-13d][23:09:48] Idrisov D. R. 017
 # [2021y-06m-13d][05:01:40] Idrisov D. R. 016
@@ -10,8 +12,8 @@
 ################################################################################
 
 set(gMINIMALIST_VERSION_MAJOR 0)
-set(gMINIMALIST_VERSION_MINOR 1)
-set(gMINIMALIST_VERSION_PATCH 8)
+set(gMINIMALIST_VERSION_MINOR 2)
+set(gMINIMALIST_VERSION_PATCH 0)
 
 set(gMINIMALIST_VERSION "${gMINIMALIST_VERSION_MAJOR}.${gMINIMALIST_VERSION_MINOR}.${gMINIMALIST_VERSION_PATCH}")
 

@@ -1,3 +1,4 @@
+# [2022y-06m-06d][05:17:32] Idrisov D. R.
 # [2021y-05m-20d][00:40:03] Idrisov D. R.
 # 2021y-01m-18d. Workspace project.
 # 2020y-08m-25d. Workspace project.
@@ -31,6 +32,24 @@ macro(detect_target_path)
     endif()
 endmacro()
 
+macro(expand_install_headers var_name)
+    if(${var_name}) 
+        if(tOUTPUT)
+            set(gNAME "${tOUTPUT}")    
+        else()
+            set(gNAME "${tNAME}")    
+        endif()
+        if("${gNAME}" MATCHES "${tSHORT}")
+            set(gTYPE "")
+        else()
+            set(gTYPE "${tSHORT}")
+        endif()
+        format_string3("g" "${tINSTALL_HEADERS}" ${var_name})
+        unset (gNAME)
+        unset (gTYPE)
+    endif()
+endmacro()
+
 ################################################################################
 
 #
@@ -54,6 +73,8 @@ function(make_target)
     set(options VIEW_RESULT)
 
     set(oneValueArgs 
+        FORCE_INSTALL_HEADERS
+        INSTALL_HEADERS
         PATH_TO_SOURCES
         SPECIALIZATION
         LANGUAGE
@@ -150,7 +171,7 @@ function(make_target)
     if("${tTYPE}" STREQUAL "HEADER_ONLY")
         set(tSPECIALIZATION)
     else()
-        cxx_specialize("${tNAME}" tSPECIALIZATION)
+        cxx_specialize("${tDIR_SOURCE}/${tNAME}" tSPECIALIZATION)
     endif()
     cxx_short_type("${tTYPE}" "${tSPECIALIZATION}" tSHORT)
 #--------
@@ -164,6 +185,32 @@ function(make_target)
     endif()
 #--------
     set(gTARGETS_TYPE_${tNAME} "${tTYPE}" PARENT_SCOPE)
+
+#--------
+
+    if(tFORCE_INSTALL_HEADERS)
+        expand_install_headers(tFORCE_INSTALL_HEADERS)
+    elseif(tINSTALL_HEADERS)
+        expand_install_headers(tINSTALL_HEADERS)
+    endif()
+
+#    if(tINSTALL_HEADERS) 
+#        if(tOUTPUT)
+#            set(gNAME "${tOUTPUT}")    
+#        else()
+#            set(gNAME "${tNAME}")    
+#        endif()
+#
+#        if("${gNAME}" MATCHES "${tSHORT}")
+#            set(gTYPE "")
+#        else()
+#            set(gTYPE "${tSHORT}")
+#        endif()
+#        format_string3("g" "${tINSTALL_HEADERS}" tINSTALL_HEADERS)
+#        unset (gNAME)
+#        unset (gTYPE)
+#    endif()
+
 #--------
     if(tVIEW_RESULT OR gDEBUG)
         view_variables(
@@ -185,6 +232,8 @@ function(make_target)
                 tNAMES_LIBRARIES
                 tADD_HEADERS
                 tADD_SOURCES
+                tINSTALL_HEADERS
+                tFORCE_INSTALL_HEADERS
                 # tLANGUAGE
            VIEW_EMPTY
         )
@@ -196,10 +245,10 @@ function(make_target)
             if(NOT EXISTS "${tDUMMY}")
                 debug_message("${tNAME}: create dummy.cpp")
                 debug_message("${tNAME}: ${tDUMMY}")
-                file(WRITE  "${tDUMMY}" "// workspace project\n")
-                file(APPEND "${tDUMMY}" "// this file was created automatically\n")
-                file(APPEND "${tDUMMY}" "// to support precompiled header\n")
-                file(APPEND "${tDUMMY}" "// for header-only libraries\n")
+                file(WRITE  "${tDUMMY}" "// WorkSpace project\n")
+                file(APPEND "${tDUMMY}" "// This file was created automatically\n")
+                file(APPEND "${tDUMMY}" "// To support precompiled header\n")
+                file(APPEND "${tDUMMY}" "// For header-only libraries\n")
             endif()
         endif()
     endif()
@@ -209,48 +258,31 @@ function(make_target)
         message(STATUS "${tNAME}: language: '${tLANGUAGE}'")
         set_target_properties(${tNAME} PROPERTIES LINKER_LANGUAGE ${tLANGUAGE})
     endif()
-#--------
 
-if(TARGET "${gNAME_PROJECT}")
-    if(NOT "${tNAME}" STREQUAL "${gNAME_PROJECT}")
-        get_target_property(master_type ${gNAME_PROJECT} TYPE)
-        if (${master_type} STREQUAL "INTERFACE_LIBRARY")
-            if("${tTYPE}" STREQUAL "HEADER_ONLY")
-                debug_message("${tNAME}: add headers from header-only '${gNAME_PROJECT}'")
-                target_link_libraries(${tNAME} INTERFACE ${gNAME_PROJECT})
+#--------
+    if(TARGET "${gNAME_PROJECT}")
+        if(NOT "${tNAME}" STREQUAL "${gNAME_PROJECT}")
+            get_target_property(master_type ${gNAME_PROJECT} TYPE)
+            if (${master_type} STREQUAL "INTERFACE_LIBRARY")
+                if("${tTYPE}" STREQUAL "HEADER_ONLY")
+                    debug_message("${tNAME}: add headers from header-only '${gNAME_PROJECT}'")
+                    target_link_libraries(${tNAME} INTERFACE ${gNAME_PROJECT})
+                else()
+                    debug_message("${tNAME}: add depency from headr-only '${gNAME_PROJECT}'")
+                    target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
+                endif()
+            elseif(${master_type} STREQUAL "EXECUTABLE")
+                debug_message("${tNAME} is not depency. It is EXECUTABLE") 
             else()
-                debug_message("${tNAME}: add depency from headr-only '${gNAME_PROJECT}'")
+                debug_message("${tNAME}: add depency '${gNAME_PROJECT}'")    
                 target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
             endif()
-        elseif(${master_type} STREQUAL "EXECUTABLE")
-            debug_message("${tNAME} is not depency. It is EXECUTABLE") 
-        else()
-            debug_message("${tNAME}: add depency '${gNAME_PROJECT}'")    
-            target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
         endif()
     endif()
-endif()
-    
-
-#    if(TARGET "${gNAME_PROJECT}")
-#        set(gTYPE_MASTER "${gTARGETS_TYPE_${gNAME_PROJECT}}")
-#        if(gTYPE_MASTER)
-#            if("${gTYPE_MASTER}" STREQUAL "HEADER_ONLY")
-#                debug_message("${tNAME}: add headers from '${gNAME_PROJECT}'")
-#                target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
-#                #target_link_libraries(${tNAME} INTERFACE ${gNAME_PROJECT})
-#
-#            elseif("${gTYPE_MASTER}" STREQUAL "STATIC_LIBRARY")
-#                debug_message("${tNAME}: add depency '${gNAME_PROJECT}'")
-#                target_link_libraries(${tNAME} PUBLIC ${gNAME_PROJECT})
-#
-#            else()
-#                debug_message("${tNAME}: ignore '${gNAME_PROJECT}' its type is incompatible: ${gTYPE_MASTER}")
-#            endif()
-#        endif()
-#    endif()
+   
 #--------
     cxx_def("${tNAME}" "${tTYPE}" "${tADD_SOURCES}")
+
 #--------
     set(local_)
     set(external_)
@@ -272,8 +304,8 @@ endif()
 
     list(APPEND tNAMES_LIBRARIES ${external_})
     set(tDEPENDENCIES ${local_})
-    unset(local_)
     unset(external_)
+    unset(local_)
 
     if(tDEPENDENCIES)
         list(REMOVE_DUPLICATES tDEPENDENCIES)
@@ -285,6 +317,7 @@ endif()
             include("${gPATH_TO_ADD_LIBRARIES}/add_${libname}.cmake")
         endif()
     endforeach()
+
 #--------
     if(NOT tOUTPUT)
         set(tOUTPUT "${tNAME}")
@@ -292,6 +325,7 @@ endif()
 
     cxx_defines("${tNAME}" "${tTYPE}" ${tPREPROCESSOR})
     cxx_includes("${tNAME}" "${tTYPE}" ${tINCLUDES})
+    cxx_copy_includes("${tNAME}" "${tTYPE}" ${tINCLUDES})
     if(NOT "${tTYPE}" STREQUAL "HEADER_ONLY")
         cxx_ouput_path("${tNAME}" "${tTYPE}" "${tSHORT}" "${tOUTPUT}")
         cxx_output_pdb("${tNAME}" "${tSHORT}" "${tOUTPUT}")
@@ -302,6 +336,50 @@ endif()
     if(tPRECOMPILED)
         cxx_add_precompiled("${tNAME}" "${tPRECOMPILED}")
     endif()
+
+#--------
+
+    get_target_property(MY_INCLUDES ${tNAME} INCLUDE_DIRECTORIES)
+    foreach(dir ${MY_INCLUDES})
+      message(STATUS "include: '${dir}'")
+      string(APPEND LIST_INCLUDES ";${dir}")
+    endforeach()
+
+#    set(f_targets "${CMAKE_BINARY_DIR}/targets.txt")
+#    if(NOT gFIRST_CALL)
+#        debug_message("create: ${f_targets}")
+#        file(WRITE  "${f_targets}" "# WorkSpace project\n")
+#        file(APPEND "${f_targets}" "# This file was created automatically\n")
+#        set(gFIRST_CALL "ON")
+#    endif()
+#
+#    debug_message("append(${tNAME}): ${f_targets}")
+#
+#    add_custom_command(
+#        TARGET "${tNAME}"
+#        POST_BUILD
+#        COMMAND "${CMAKE_COMMAND}" -E echo "${tNAME}": "${tSHORT}": "${tDIR_SOURCE}": "$<TARGET_FILE_DIR:${tNAME}>" >> "${f_targets}" 
+#    )
+
+    set(ENV{eCHECK} "xxx")
+
+    add_custom_command(TARGET ${tNAME}
+        POST_BUILD
+        COMMAND "${CMAKE_COMMAND}"
+            "-DDIR_CMAKE_BINARY=${CMAKE_BINARY_DIR}"
+            "-DtNAME=${tNAME}"
+            "-DtDIR_SOURCE=${tDIR_SOURCE}"
+            "-DtINCLUDES=${MY_INCLUDES}"
+            "-DgADDRESS_MODEL=${gADDRESS_MODEL}"
+            "-DgBUILD_TYPE=${gBUILD_TYPE}"
+            "-DgBUILD_TYPE2=$<CONFIG>"
+            "-DtTYPE=$<TYPE>"
+            "-DgRUNTIME_CPP=${gRUNTIME_CPP}"
+            -P "${gDIR_CMAKE_SCENARIO}/post_build.cmake"
+        COMMENT "Running script..."
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    )
+
 #--------
     cxx_source_group("${tNAME}" "${tDIR_SOURCE}" tHEADERS)
     cxx_source_group("${tNAME}" "${tDIR_SOURCE}" tSOURCES)
@@ -327,6 +405,9 @@ endif()
     unset(ADD_HEADERS)
     unset(ADD_SOURCES)
     unset(tDIR_SOURCE)
+
+    unset(tINSTALL_HEADERS)
+    unset(tFORCE_INSTALL_HEADERS)
 endfunction()
 
 ################################################################################

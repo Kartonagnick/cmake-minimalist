@@ -80,6 +80,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/tools/map.cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/tools/absolute.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/tools/format_string.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/tools/expand_value.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/tools/mask2regex.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/tools/view_variables.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/tools/check_symptoms.cmake")

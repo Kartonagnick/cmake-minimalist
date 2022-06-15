@@ -1,4 +1,5 @@
 
+# 2022y-04m-22d. Workspace project.
 # 2020y-05m-20d. Workspace project.
 ################################################################################
 
@@ -85,12 +86,12 @@ macro(default_settings)
 #--------
     if(NOT gDIR_PRODUCT)
         if(gDIR_WORKSPACE)
-            set(gDIR_PRODUCT "${gDIR_WORKSPACE}/_products/${gNAME_PROJECT}")
+            set(gDIR_PRODUCT "${gDIR_WORKSPACE}/_products/${gNAME_PROJECT}/${gVERSION}")
         else()
-            set(gDIR_PRODUCT "${CMAKE_BINARY_DIR}/../_products/${gNAME_PROJECT}")
+            set(gDIR_PRODUCT "${CMAKE_BINARY_DIR}/../_products/${gNAME_PROJECT}/${gVERSION}")
         endif()
     endif()
-    set(gDIR_PRODUCT "${gDIR_PRODUCT}/{SUFFIX}")
+    # set(gDIR_PRODUCT "${gDIR_PRODUCT}/{SUFFIX}")
 #--------
     if(gDEBUG)
         message(STATUS "  [gDIR_CMAKE_SCENARIO] ... '${gDIR_CMAKE_SCENARIO}'")

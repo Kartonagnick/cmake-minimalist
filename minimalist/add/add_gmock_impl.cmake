@@ -46,7 +46,6 @@ function(add_gmock dir_result ver_result)
 
     if(dir_gmock)
         commit_external("gmock" "${dir_gmock}" "d")
-        commit_external("gtest" "${dir_gmock}" "d")
         if(gDEBUG)
             if(ver_gmock)
                 message(STATUS "link: <${tNAME}> ---> <gmock-${ver_gmock}>")

@@ -27,12 +27,14 @@ function(cxx_ouput_path_exe target short name_output)
     endif()
 
 
-    if("${target}" MATCHES "${short}")
+    if("${gTARGET_NAME}" MATCHES "${short}")
         set(gTARGET_TYPE "")
     else()
         set(gTARGET_TYPE "${short}")
     endif()
-    format_string3("g" "${gDIR_PRODUCT}" output)
+
+    set(d_product "${gDIR_PRODUCT}/${gSUFFIX}")
+    format_string3("g" "${d_product}" output)
 
     if(gDEBUG)
         message(STATUS "  common: ${output}")
@@ -46,14 +48,12 @@ function(cxx_ouput_path_exe target short name_output)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
         string(TOUPPER ${conf} CONFIG ) 
         set(gBUILD_TYPE ${conf})
-        format_string3("g" "${gDIR_PRODUCT}" output)
+        format_string3("g" "${d_product}" output)
         if(gDEBUG)
             message(STATUS "  ${conf}: ${output}")
         endif()
         set_target_properties(${target} 
-            PROPERTIES 
-            RUNTIME_OUTPUT_DIRECTORY_${CONFIG} 
-            "${output}"
+            PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${CONFIG} "${output}"
         )
     endforeach()
 
@@ -64,7 +64,7 @@ function(cxx_ouput_path_exe target short name_output)
         foreach(conf ${CMAKE_CONFIGURATION_TYPES})
             string(TOUPPER ${conf} CONFIG ) 
             set_target_properties(${target} 
-                PROPERTIES OUTPUT_NAME "${name_output}"
+                PROPERTIES OUTPUT_NAME_${CONFIG} "${name_output}"
             )
         endforeach()
     endif()

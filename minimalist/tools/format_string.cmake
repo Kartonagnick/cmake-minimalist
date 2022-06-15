@@ -7,10 +7,10 @@
 #    Expand format string
 #
 #  Usage:
-#    set(BUILD_TYPE debug) 
-#    set(ADDRESS_MODEL 32)
+#    set(gBUILD_TYPE debug) 
+#    set(gADDRESS_MODEL 32)
 #    format_string(
-#        "foo/build/{BUILD_TYPE}-{ADDRESS_MODEL}/test" output
+#        "g" "foo/build/{BUILD_TYPE}-{ADDRESS_MODEL}/test" output
 #    )
 #    message(STATUS "result: ${output}")
 #

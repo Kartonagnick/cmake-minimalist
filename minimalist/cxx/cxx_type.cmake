@@ -43,25 +43,33 @@ function(cxx_specialize target var_output)
         return()
     endif()
 
-    if("${target}" STREQUAL "test")
-        set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+    file(RELATIVE_PATH PATH_LIST "${gDIR_SOURCE}" "${target}")
+    string(REPLACE "/"  ";" PATH_LIST "${PATH_LIST}")
+    string(REPLACE "\\" ";" PATH_LIST "${PATH_LIST}")
 
-    elseif("${target}" MATCHES "test_.*")
-        set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+    foreach(dir ${PATH_LIST})
+        if("${dir}" MATCHES "test")
+            set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+            return()
 
-    elseif("${target}" MATCHES ".*_test")
-        set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+        elseif("${dir}" MATCHES "test_.*")
+            set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+            return()
 
-    elseif("${target}" MATCHES "test-.*")
-        set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+        elseif("${dir}" MATCHES ".*_test")
+            set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+            return()
 
-    elseif("${target}" MATCHES ".*-test")
-        set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+        elseif("${dir}" MATCHES "test-.*")
+            set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+            return()
 
-    else()
-        set(${var_output} "" PARENT_SCOPE)
-    endif()
-
+        elseif("${dir}" MATCHES ".*-test")
+            set(${var_output} "UNIT_TEST" PARENT_SCOPE)
+            return()
+       endif()
+    endforeach()
+    set(${var_output} "" PARENT_SCOPE)
 endfunction()
 
 #-------------------------------------------------------------------------------
